@@ -27,8 +27,10 @@ jobs:
     - name: Install pnpm
       run: npm install -g pnpm
 
-    - name: Install dependencies
-      run: pnpm install
+    - name: Change to app directory and install dependencies
+      run: |
+        cd my-electron-app
+        pnpm install
 
     - name: Package app
       run: pnpm run package
