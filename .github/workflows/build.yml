@@ -22,7 +22,7 @@ jobs:
     - name: Run setup script
       run: |
         chmod +x generate_electron_project.sh
-        ./setup_node_gyp.sh
+        ./generate_electron_project.sh
 
     - name: Install pnpm
       run: npm install -g pnpm
