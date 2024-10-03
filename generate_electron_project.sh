@@ -28,10 +28,10 @@ create_file "package.json" '{
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^latest",
-    "electron-builder": "^latest",
-    "electron-packager": "^latest",
-    "electron-installer-redhat": "^latest"
+    "electron": "latest",
+    "electron-builder": "latest",
+    "electron-packager": "latest",
+    "electron-installer-redhat": "latest"
   },
   "build": {
     "appId": "com.example.myapp",
@@ -51,7 +51,8 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false
     }
   })
 
@@ -129,35 +130,38 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: '22.7.0'  # Specify the latest LTS version explicitly
 
-    - name: Run setup script
-      run: |
-        chmod +x generate_electron_project.sh
-        ./generate_electron_project.sh
-
     - name: Install pnpm
-      run: npm install -g pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8
 
     - name: Install dependencies
-      run: pnpm install
+      run: |
+        cd $project_name
+        pnpm install
 
     - name: Package app
-      run: pnpm run package
+      run: |
+        cd $project_name
+        pnpm run package
 
     - name: Build RPM
-      run: pnpm run rpm
+      run: |
+        cd $project_name
+        pnpm run rpm
 
     - name: Upload RPM artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: rpm-package
-        path: dist/installers/*.rpm"
+        path: $project_name/dist/installers/*.rpm"
 
 # Create generate_electron_project.sh
 create_file "generate_electron_project.sh" '#!/bin/bash
